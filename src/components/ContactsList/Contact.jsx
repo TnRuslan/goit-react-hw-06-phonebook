@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 
 export const Contact = ({ name, number, id }) => {
   const dispatch = useDispatch();
-  console.log(id);
   return (
     <li className={css.contact__item}>
       <p>

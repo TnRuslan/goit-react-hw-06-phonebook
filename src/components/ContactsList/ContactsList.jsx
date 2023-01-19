@@ -3,13 +3,12 @@ import css from './ContactsList.module.css';
 import { useSelector } from 'react-redux';
 
 export const ContactsList = () => {
-  const contactsFromStore = useSelector(state => state.myContacts.contacts);
-  console.log(contactsFromStore);
-  const filter = useSelector(state => state.myFilter);
+  const contacts = useSelector(state => state.myContacts.contacts);
 
-  const filteredContacts = contactsFromStore.filter(contact => {
-    console.log(contact.payload);
-    return contact.payload.name.toLowerCase().includes(filter.toLowerCase());
+  const filter = useSelector(state => state.myContacts.filter);
+  console.log(filter);
+  const filteredContacts = contacts.filter(contact => {
+    return contact.name.toLowerCase().includes(filter.toLowerCase());
   });
 
   return (
@@ -17,10 +16,10 @@ export const ContactsList = () => {
       {filteredContacts.map(contact => {
         return (
           <Contact
-            name={contact.payload.name}
-            number={contact.payload.number}
-            key={contact.payload.id}
-            id={contact.payload.id}
+            name={contact.name}
+            number={contact.number}
+            key={contact.id}
+            id={contact.id}
           />
         );
       })}

@@ -1,7 +1,7 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import {
-  persistStore,
   persistReducer,
+  persistStore,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -14,47 +14,39 @@ import storage from 'redux-persist/lib/storage';
 const persistConfig = {
   key: 'contacts',
   storage,
+  whitelist: 'contacts',
 };
 
 const contactsSlice = createSlice({
   name: 'myContacts',
-  initialState: { contacts: [] },
+  initialState: { contacts: [], filter: '' },
   reducers: {
     addContact(state, action) {
-      state.contacts.push(action);
-      //   return [...state, action.payload];
+      state.contacts.push(action.payload);
     },
     deleteContact(state, action) {
-      console.log(state);
-      return state.contacts.filter(contact => contact.id !== action.payload);
+      const index = state.contacts.findIndex(
+        contact => contact.id === action.payload
+      );
+      state.contacts.splice(index, 1);
+      // return state.contacts.filter(contact => contact.id !== action.payload);
     },
-  },
-});
-
-const persistedContactsReduser = persistReducer(
-  persistConfig,
-  contactsSlice.reducer
-);
-
-export const { addContact, deleteContact } = contactsSlice.actions;
-
-const filterSlicer = createSlice({
-  name: 'myFilter',
-  initialState: '',
-  reducers: {
     filterContacts(state, action) {
-      return (state = action.payload);
+      state.filter = action.payload;
     },
   },
 });
 
-export const { filterContacts } = filterSlicer.actions;
+const persistedReducer = persistReducer(persistConfig, contactsSlice.reducer);
+
+export const { addContact, deleteContact, filterContacts } =
+  contactsSlice.actions;
 
 export const store = configureStore({
   reducer: {
-    myContacts: persistedContactsReduser,
-    myFilter: filterSlicer.reducer,
+    myContacts: persistedReducer,
   },
+
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
